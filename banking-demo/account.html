@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account details - SecureBank</title>
+<link rel="stylesheet" href="assets/bank.css">
+</head>
+<body>
+<script src="assets/data.js"></script>
+<script src="assets/bank.js"></script>
+<div class="page">
+  <h1>Account details</h1>
+  <p class="sub">Savings account - primary holder</p>
+
+  <div class="card"><dl id="all-fields"></dl></div>
+
+  <div class="card">
+    <h2>Registered beneficiaries</h2>
+    <table>
+      <thead><tr><th>Name</th><th>Account number</th><th>IFSC</th></tr></thead>
+      <tbody id="beneficiary-rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  BankApp.requireLogin();
+  BankApp.mountChrome("Account details");
+  const d = BankApp.data;
+  const rows = [
+    ["Customer name", d.customerName, "customerName"],
+    ["Account number", d.accountNumber, "accountNumber"],
+    ["IFSC", d.ifsc, "ifsc"],
+    ["Branch", d.branch, "branch"],
+    ["Email", d.email, "email"],
+    ["Mobile", d.phone, "phone"],
+    ["PAN", d.pan, "pan"],
+    ["Card on file", d.cardNumber, "cardNumber"],
+    ["Available balance", BankApp.money(d.balance), "balance"]
+  ];
+  document.getElementById("all-fields").innerHTML = rows.map(
+    ([k, v, name]) => `<div class="field"><dt>${k}</dt><dd data-field="${name}">${v}</dd></div>`
+  ).join("");
+  document.getElementById("beneficiary-rows").innerHTML = d.beneficiaries.map(
+    b => `<tr><td>${b.name}</td><td data-field="accountNumber">${b.account}</td><td data-field="ifsc">${b.ifsc}</td></tr>`
+  ).join("");
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transfer money - SecureBank</title>
+<link rel="stylesheet" href="assets/bank.css">
+</head>
+<body>
+<script src="assets/data.js"></script>
+<script src="assets/bank.js"></script>
+<div class="page">
+  <h1>Transfer money</h1>
+  <p class="sub">Simulated transfer. No money moves and nothing is sent to a real bank.</p>
+
+  <div class="card">
+    <div class="form-row">
+      <label for="beneficiary">Beneficiary</label>
+      <select id="beneficiary" name="beneficiary"></select>
+    </div>
+
+    <div class="form-row">
+      <label for="account-number">Account Number</label>
+      <input id="account-number" name="accountNumber" type="text" autocomplete="off">
+    </div>
+
+    <div class="form-row">
+      <label for="ifsc">IFSC</label>
+      <input id="ifsc" name="ifsc" type="text" autocomplete="off">
+    </div>
+
+    <div class="form-row">
+      <label for="amount">Amount</label>
+      <input id="amount" name="amount" type="text" inputmode="numeric" placeholder="Amount in rupees" autocomplete="off">
+    </div>
+
+    <div class="form-row">
+      <label for="remarks">Remarks</label>
+      <input id="remarks" name="remarks" type="text" placeholder="Optional" autocomplete="off">
+    </div>
+
+    <div class="error" id="transfer-error"></div>
+
+    <div class="actions">
+      <button id="review-transfer" type="button">Review Transfer</button>
+      <button class="ghost" type="button" onclick="location.href='dashboard.html'">Cancel</button>
+    </div>
+
+    <div id="receipt"></div>
+  </div>
+</div>
+
+<script>
+  BankApp.requireLogin();
+  BankApp.mountChrome("Transfer money");
+  const d = BankApp.data;
+
+  const select = document.getElementById("beneficiary");
+  select.innerHTML = d.beneficiaries.map((b, i) => `<option value="${i}">${b.name}</option>`).join("");
+
+  function syncBeneficiary() {
+    const b = d.beneficiaries[select.value];
+    document.getElementById("account-number").value = b.account;
+    document.getElementById("ifsc").value = b.ifsc;
+  }
+  select.addEventListener("change", syncBeneficiary);
+  syncBeneficiary();
+
+  document.getElementById("review-transfer").addEventListener("click", () => {
+    const amount = parseFloat(document.getElementById("amount").value.replace(/[^0-9.]/g, ""));
+    const err = document.getElementById("transfer-error");
+    const receipt = document.getElementById("receipt");
+    if (!amount || amount <= 0) {
+      err.textContent = "Enter an amount greater than zero to review the transfer.";
+      receipt.innerHTML = "";
+      return;
+    }
+    err.textContent = "";
+    const b = d.beneficiaries[select.value];
+    receipt.innerHTML = `
+      <div class="receipt">
+        <strong>Review this transfer</strong>
+        ${BankApp.money(amount)} to ${b.name}, account <span data-field="accountNumber">${b.account}</span>,
+        IFSC <span data-field="ifsc">${b.ifsc}</span>.
+        <br>Simulated only - confirm in your real banking app if this were live.
+      </div>`;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start VeilAgent",
+      "type": "shell",
+      "command": "${workspaceFolder}/run.sh",
+      "windows": { "command": "${workspaceFolder}\\run.bat" },
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}

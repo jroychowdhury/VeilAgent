@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VeilAgent</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+
+<header class="head">
+  <div class="logo">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 12h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+    VeilAgent
+  </div>
+  <div class="client" id="client-badge">VEIL-001</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab is-active" data-view="agent">Agent</button>
+  <button class="tab" data-view="privacy">Privacy</button>
+  <button class="tab" data-view="security">Security</button>
+</nav>
+
+<!-- ---------------- AGENT ---------------- -->
+<section class="view is-active" id="view-agent">
+  <div class="pipeline" id="pipeline">
+    <div class="stage" data-stage="see"><i></i>See<span>screenshot + DOM</span></div>
+    <div class="stage" data-stage="detect"><i></i>Detect<span>PII on device</span></div>
+    <div class="stage" data-stage="redact"><i></i>Redact<span>before sending</span></div>
+    <div class="stage" data-stage="access"><i></i>Access check<span>token + role</span></div>
+    <div class="stage" data-stage="reason"><i></i>Reason<span>action JSON</span></div>
+    <div class="stage" data-stage="act"><i></i>Act<span>browser click</span></div>
+  </div>
+
+  <label class="field-label" for="task">What should the agent do?</label>
+  <textarea id="task" rows="2">Open the transfer page</textarea>
+
+  <div class="suggestions">
+    <button class="chip" type="button">Open the transfer page</button>
+    <button class="chip" type="button">Show my transactions</button>
+    <button class="chip" type="button">Transfer 5000 to my beneficiary</button>
+    <button class="chip" type="button">What is my account number?</button>
+  </div>
+
+  <button class="primary" id="run-agent" type="button">Run agent</button>
+
+  <div class="log" id="agent-log">
+    <p class="empty">Open SecureBank at localhost:8000, then run a task. Every step appears here.</p>
+  </div>
+</section>
+
+<!-- ---------------- PRIVACY ---------------- -->
+<section class="view" id="view-privacy">
+  <div class="stat-row">
+    <div class="stat"><b id="stat-found">0</b><span>sensitive values found</span></div>
+    <div class="stat"><b id="stat-sent">0</b><span>values transmitted</span></div>
+  </div>
+
+  <div class="verdict" id="privacy-verdict">Scan a page to see what stays on this device.</div>
+
+  <h3>Before and after</h3>
+  <div class="pairs" id="redaction-pairs">
+    <p class="empty">Nothing scanned yet.</p>
+  </div>
+
+  <h3>Screenshot leaving the device</h3>
+  <div class="shot" id="shot-wrap">
+    <p class="empty">The screenshot is blacked out here and held locally.</p>
+  </div>
+
+  <h3>Text payload sent to the reasoning layer</h3>
+  <pre class="payload" id="payload">-</pre>
+
+  <button class="ghost" id="scan-only" type="button">Scan page without acting</button>
+</section>
+
+<!-- ---------------- SECURITY ---------------- -->
+<section class="view" id="view-security">
+  <div class="stat-row">
+    <div class="stat"><b id="stat-allowed">0</b><span>allowed</span></div>
+    <div class="stat"><b id="stat-blocked">0</b><span>blocked</span></div>
+  </div>
+
+  <div class="identity">
+    <div>Acting as <strong id="identity-client">VEIL-001</strong></div>
+    <div class="actions">
+      <button class="ghost" id="use-valid" type="button">Use valid token</button>
+      <button class="danger" id="use-invalid" type="button">Use invalid token</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="ghost" id="probe-agent" type="button">Call /agent/reason</button>
+    <button class="ghost" id="probe-admin" type="button">Call /admin/accounts</button>
+    <button class="ghost" id="refresh-audit" type="button">Refresh audit log</button>
+  </div>
+
+  <h3>Server audit log</h3>
+  <table class="audit">
+    <thead><tr><th>Time</th><th>Client</th><th>Endpoint</th><th>Status</th></tr></thead>
+    <tbody id="audit-rows"><tr><td colspan="4" class="empty">Refresh to load.</td></tr></tbody>
+  </table>
+
+  <p class="note" id="audit-note"></p>
+</section>
+
+<script src="../security/auth.js"></script>
+<script src="../security/accessMonitor.js"></script>
+<script src="../detection/visionDetector.js"></script>
+<script src="../agent/actionParser.js"></script>
+<script src="../agent/agentLoop.js"></script>
+<script src="../storage/db.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>

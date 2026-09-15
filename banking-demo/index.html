@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in - SecureBank</title>
+<link rel="stylesheet" href="assets/bank.css">
+</head>
+<body>
+<script src="assets/data.js"></script>
+<script src="assets/bank.js"></script>
+
+<div class="topbar"><div class="brand"><span></span>SecureBank</div></div>
+<div class="demo-flag">Simulated bank for the VeilAgent prototype. All names, numbers and balances are fictional.</div>
+
+<div class="login-shell">
+  <div class="login-card">
+    <h1>Sign in to net banking</h1>
+    <p class="sub">Use your customer ID to continue.</p>
+
+    <div class="error" id="login-error"></div>
+
+    <div class="form-row">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="off" placeholder="Customer ID">
+    </div>
+
+    <div class="form-row">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="off" placeholder="Password">
+    </div>
+
+    <button id="login-button" type="button">Sign in</button>
+
+    <p class="hint">Demo credentials: <strong>demo</strong> / <strong>demo123</strong></p>
+  </div>
+</div>
+
+<script>
+  function attemptLogin() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value;
+    if (BankApp.login(u, p)) {
+      location.href = "dashboard.html";
+    } else {
+      document.getElementById("login-error").textContent =
+        "That username and password do not match. Try demo / demo123.";
+    }
+  }
+  document.getElementById("login-button").addEventListener("click", attemptLogin);
+  document.getElementById("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") attemptLogin();
+  });
+</script>
+</body>
+</html>

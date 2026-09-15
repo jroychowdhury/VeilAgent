@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - SecureBank</title>
+<link rel="stylesheet" href="assets/bank.css">
+</head>
+<body>
+<script src="assets/data.js"></script>
+<script src="assets/bank.js"></script>
+<div class="page">
+  <h1 id="greeting">Welcome</h1>
+  <p class="sub" id="branch"></p>
+
+  <div class="card">
+    <div class="balance" id="balance">
+      <small>Available balance - Savings account</small>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Account</h2>
+      <dl id="account-fields"></dl>
+    </div>
+    <div class="card">
+      <h2>Contact on file</h2>
+      <dl id="contact-fields"></dl>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Quick actions</h2>
+    <div class="actions">
+      <button type="button" onclick="location.href='transfer.html'">Transfer Money</button>
+      <button type="button" class="ghost" onclick="location.href='transactions.html'">Transactions</button>
+      <button type="button" class="ghost" onclick="location.href='account.html'">Account Details</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  BankApp.requireLogin();
+  BankApp.mountChrome("Dashboard");
+  const d = BankApp.data;
+  document.getElementById("greeting").textContent = "Welcome, " + d.customerName;
+  document.getElementById("branch").textContent = d.branch;
+  document.getElementById("balance").insertAdjacentHTML("afterbegin", BankApp.money(d.balance));
+
+  function fields(target, rows) {
+    document.getElementById(target).innerHTML = rows.map(
+      ([k, v, name]) => `<div class="field"><dt>${k}</dt><dd data-field="${name}">${v}</dd></div>`
+    ).join("");
+  }
+  fields("account-fields", [
+    ["Account number", d.accountNumber, "accountNumber"],
+    ["IFSC", d.ifsc, "ifsc"],
+    ["Card on file", d.cardNumber, "cardNumber"]
+  ]);
+  fields("contact-fields", [
+    ["Email", d.email, "email"],
+    ["Mobile", d.phone, "phone"],
+    ["PAN", d.pan, "pan"]
+  ]);
+</script>
+</body>
+</html>
